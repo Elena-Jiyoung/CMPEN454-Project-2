@@ -36,6 +36,5 @@ codegen/
 .buildtool/
 
 # Ignore large data files that don’t need to be in version control
-*.mat
 *.fig
 
