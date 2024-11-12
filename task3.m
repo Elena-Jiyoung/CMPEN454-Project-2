@@ -2,6 +2,7 @@ paramV1 = load("Parameters_V1_1.mat").Parameters;
 paramV2 = load("Parameters_V2_1.mat").Parameters;
 pixel_points1 = load("pixel_points1.mat").pixel_points1;
 pixel_points2 = load("pixel_points2.mat").pixel_points2;
+mocap = load("mocapPoints3D.mat").pts3D;
 
 % Initialize arrays containing direction vectors for each point
 directions1 = zeros(3, 39);
@@ -57,9 +58,13 @@ for i = 1:length(pixel_points1)
     b = solution(2);
     c = solution(3);
     
-    disp(["Iteration ", i, " error: ", c]);
+    fprintf("Iteration %d - Error %.30f\n", i, c);
+
     % Point is the midpoint of the two found points
     point = ((camera1 + a * P_l) + (camera2 + b * P_r)) / 2;
     points(:, i) = point;
 end
     
+% Calculate mean square error
+MSE = (sum((points - mocap).^2, "all")) / length(pixel_points1);
+fprintf("\nMean Square Error: %.30f\n", MSE);
