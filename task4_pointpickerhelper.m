@@ -26,8 +26,4 @@ disp(image1pt);
 disp('Selected points in Image 2:');
 disp(image2pt);
 
-%floor points 1 selected are (409, 716) in cam 1 and (961, 886) in cam 2
-%floor points 2 selected are (1051, 954) in cam 1 and (1698, 708) in cam 2
-%floor points 3 selected are (1002, 617) in cam 1 and (564, 611) in cam 2
-
 % need to put these in triangulation code
