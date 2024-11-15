@@ -36,7 +36,6 @@ disp(F);
 
 %------------------Sanity Check Below----------------------------------------------------------------------------------
 
-% Load the images
 im1 = imread("im1corrected.jpg");
 im2 = imread("im2corrected.jpg");
 
@@ -60,8 +59,6 @@ sanity_check(im1, im2, F, pts1, pts2);
 % Sanity Check functions
 function sanity_check(im1, im2, F, pts1, pts2)
     % Sanity check for F by plotting epipolar lines
-
-    % Display epipolar lines in Image 2 for points from Image 1
     figure(1); imagesc(im1); axis image; drawnow;
     figure(2); imagesc(im2); axis image; drawnow;
     if nargin > 2
@@ -79,7 +76,6 @@ function sanity_check(im1, im2, F, pts1, pts2)
     hold off
     drawnow;
 
-    % Display epipolar lines in Image 2
     if nargin > 3
        x2 = pts2(:,1);
        y2 = pts2(:,2);

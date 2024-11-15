@@ -1,4 +1,7 @@
-F = load("Fmatrix.mat").F;
+F = load("Fmatrix.mat").F; %importing F matrix from task 5
+F_normalized = load("F_with_Hartley.mat").F_normalized; % importing F from task 6 Hartley Preconditioning
+F_without_hartley = load("F_without_Hartley.mat").F_without_hartley; % importing F from task 6 without Hartley Preconditioning
+
 
 function calculateSGD(F)
     % 39 2D points from task 3.2
@@ -32,3 +35,5 @@ function calculateSGD(F)
 end
 
 calculateSGD(F);
+calculateSGD(F_normalized);
+calculateSGD(F_without_hartley);

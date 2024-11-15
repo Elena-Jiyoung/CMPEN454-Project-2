@@ -1,3 +1,4 @@
+% Function call
 % Load the images
 im1 = imread("im1corrected.jpg");
 im2 = imread("im2corrected.jpg");
@@ -12,10 +13,22 @@ title('Select corresponding points in Image 2, then press Enter');
 [x2, y2] = getpts;
 pts2 = [x2, y2];
 
-eightpoint_with_hartley(im1, im2, pts1, pts2, 1, 2);
-eightpoint_without_hartley(im1, im2, pts1, pts2, 3, 4);
+% save these points to be used in task 7
+save('pts1.mat', 'pts1');
+save('pts2.mat', 'pts2');
 
+% Load previously saved points
+load('pts1.mat');
+load('pts2.mat');
+[F_normalized, points1, points2] = eightpoint_with_hartley(im1, im2, pts1, pts2, 1, 2);
+[F_without_hartley, points_1, points_2] = eightpoint_without_hartley(im1, im2, pts1, pts2, 3, 4);
 
+% save these F matrices to be used in task 7
+save('F_with_Hartley.mat', 'F_normalized');
+save('F_without_Hartley.mat', 'F_without_hartley');
+
+%----------Eightpoint Algorithm 1. With Hartley Preconditioning and 
+% 2. Without Hartley Preconditionding-------------------------
 % First, Compute F using eightpoint algorithm with Hartley
 % preconditioning(normalization) as shown in the demo code.
 function [F_normalized, pts1, pts2] = eightpoint_with_hartley(im1, im2, pts1, pts2, fig1, fig2)
