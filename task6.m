@@ -5,8 +5,17 @@
 im = imread('im1corrected.jpg');
 im2 = imread('im2corrected.jpg');
 
-F_with_hartley = eightpoint_with_hartley(im, im2);
-F_without_hartley = eightpoint_without_hartley(im, im2);
+[F_with_hartley, pts1, pts2] = eightpoint_with_hartley(im, im2);
+% Save points from `eightpoint_with_hartley`
+save('pts1_with_hartley.mat', 'pts1');
+save('pts2_with_hartley.mat', 'pts2');
+
+[F_without_hartley, pts1, pts2] = eightpoint_without_hartley(im, im2);
+% Save points from `eightpoint_without_hartley`
+save('pts1_without_hartley.mat', 'pts1');
+save('pts2_without_hartley.mat', 'pts2');
+
+% Save the fundamental matrices for Task 7
 save("F_with_Hartley.mat", "F_with_hartley");
 save("F_without_Hartley.mat", "F_without_hartley");
 
@@ -21,12 +30,12 @@ disp(F_without_hartley);
 % 2. Without Hartley Preconditionding-------------------------
 % First, Compute F using eightpoint algorithm with Hartley
 % preconditioning(normalization) as shown in the demo code.
-function [F_with_hartley] = eightpoint_with_hartley(im, im2)
+function [F_with_hartley, pts1, pts2] = eightpoint_with_hartley(im, im2)
     
     figure(1); imagesc(im); axis image; drawnow;
     figure(2); imagesc(im2); axis image; drawnow;
     
-    figure(1); [x1,y1] = getpts;
+    figure(1); [x1,y1] = getpts; pts1 = [x1, y1];
     figure(1); imagesc(im); axis image; hold on
     for i=1:length(x1)
        h=plot(x1(i),y1(i),'*'); set(h,'Color','g','LineWidth',2);
@@ -36,7 +45,7 @@ function [F_with_hartley] = eightpoint_with_hartley(im, im2)
     drawnow;
     
     figure(2); imagesc(im2); axis image; drawnow;
-     [x2,y2] = getpts;
+     [x2,y2] = getpts; pts2 = [x2, y2];
     figure(2); imagesc(im2); axis image; hold on
     for i=1:length(x2)
        h=plot(x2(i),y2(i),'*'); set(h,'Color','g','LineWidth',2);
@@ -150,7 +159,7 @@ end
 
 
 % Eight-point algorithm without Hartley preconditioning
-function [F_without_hartley] = eightpoint_without_hartley(im, im2)
+function [F_without_hartley, pts1, pts2] = eightpoint_without_hartley(im, im2)
         
     
     figure(3); imagesc(im); axis image; drawnow;
@@ -158,7 +167,7 @@ function [F_without_hartley] = eightpoint_without_hartley(im, im2)
     
     
     
-    figure(3); [x1,y1] = getpts;
+    figure(3); [x1,y1] = getpts; pts1 = [x1, y1];
     figure(3); imagesc(im); axis image; hold on
     for i=1:length(x1)
        h=plot(x1(i),y1(i),'*'); set(h,'Color','g','LineWidth',2);
@@ -168,7 +177,7 @@ function [F_without_hartley] = eightpoint_without_hartley(im, im2)
     drawnow;
     
     figure(4); imagesc(im2); axis image; drawnow;
-     [x2,y2] = getpts;
+     [x2,y2] = getpts; pts2 = [x2, y2];
     figure(4); imagesc(im2); axis image; hold on
     for i=1:length(x2)
        h=plot(x2(i),y2(i),'*'); set(h,'Color','g','LineWidth',2);
