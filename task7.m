@@ -2,7 +2,15 @@ F = load("Fmatrix.mat").F; %importing F matrix from task 5
 F_normalized = load("F_with_Hartley.mat").F_normalized; % importing F from task 6 Hartley Preconditioning
 F_without_hartley = load("F_without_Hartley.mat").F_without_hartley; % importing F from task 6 without Hartley Preconditioning
 
+% F normalized matrix:
+% 1.27822472162297e-07	4.43925010447522e-08	-7.97293632020215e-05
+%-1.89346911608591e-06	-3.20078232769076e-06	0.00202293370394392
+% 0.000457527463997337	0.00277736044401169	-1.15218358263831
 
+% F_without_hartley matrix:
+% -1.41176525100667e-06	-5.09295256169469e-07	0.00120723619407356
+% 2.99849065367248e-06	5.45316585463336e-06	-0.00343662763185998
+% -0.000127571890209574	-0.00450941818639676	0.999983190360241
 function calculateSGD(F)
     % 39 2D points from task 3.2
     pixel_points1 = load("pixel_points1.mat").pixel_points1;
@@ -35,5 +43,7 @@ function calculateSGD(F)
 end
 
 calculateSGD(F);
+disp("Calculate using F from task 6 with Hartley Preconditioning: ")
 calculateSGD(F_normalized);
+disp("Calculate using F from task 6 without Hartley Preconditioning: ")
 calculateSGD(F_without_hartley);

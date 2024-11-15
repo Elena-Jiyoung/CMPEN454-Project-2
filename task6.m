@@ -20,6 +20,8 @@ save('pts2.mat', 'pts2');
 % Load previously saved points
 load('pts1.mat');
 load('pts2.mat');
+
+
 [F_normalized, points1, points2] = eightpoint_with_hartley(im1, im2, pts1, pts2, 1, 2);
 [F_without_hartley, points_1, points_2] = eightpoint_without_hartley(im1, im2, pts1, pts2, 3, 4);
 
