@@ -18,7 +18,7 @@ T_z = T_xyz(3,1);
 S = [0 -T_z T_y; T_z 0 -T_x; -T_y T_x 0;];
 disp("S:");
 disp(S);
-% 2) Solve for the relative rotation between them
+% 2) Solve for the relative rotation between them: R = R_2*R_1^T
 R = R_cam2_wrt_world * R_cam1_wrt_world';
 disp("R:");
 disp(R);
@@ -34,7 +34,8 @@ F = inv(K_cam2)' * E * inv(K_cam1);
 disp("Fundamental Matrix F:");
 disp(F);
 
-% Load the images
+%------------------Sanity Check Below----------------------------------------------------------------------------------
+
 im1 = imread("im1corrected.jpg");
 im2 = imread("im2corrected.jpg");
 
@@ -53,53 +54,81 @@ title('Click to select corresponding points in Image 2, then press Enter');
 pts2 = [x2, y2];
 
 % Perform Sanity check
-
-sanity_check_epipolar_lines(im1, im2, F, pts1, pts2);
+sanity_check(im1, im2, F, pts1, pts2);
 
 % Sanity Check functions
-function sanity_check_epipolar_lines(im1, im2, F, pts1, pts2)
-    % Sanity check for the fundamental matrix F by plotting epipolar lines
+function sanity_check(im1, im2, F, pts1, pts2)
+    % Sanity check for F by plotting epipolar lines
+    figure(1); imagesc(im1); axis image; drawnow;
+    figure(2); imagesc(im2); axis image; drawnow;
+    if nargin > 2
+       x1 = pts1(:,1);
+       y1 = pts1(:,2);
+    else
+       figure(1); imagesc(im1); axis image; drawnow;
+       [x1,y1] = getpts;
+    end
+    figure(1); imagesc(im1); axis image; hold on
+    for i=1:length(x1)
+      h=plot(x1(i),y1(i),'*'); set(h,'Color','g','LineWidth',2);
+      text(x1(i),y1(i),sprintf('%d',i));
+    end
+    hold off
+    drawnow;
 
-    % Display epipolar lines in Image 2 for points from Image 1
-    figure(1); imagesc(im1); axis image; hold on;
-    plot(pts1(:,1), pts1(:,2), 'ro', 'MarkerSize', 5, 'LineWidth', 1.5);
-    title('Image 1 with points');
-    
+    if nargin > 3
+       x2 = pts2(:,1);
+       y2 = pts2(:,2);
+    else
+       figure(2); imagesc(im2); axis image; drawnow;
+       [x2,y2] = getpts;
+    end
+    figure(2); imagesc(im2); axis image; hold on
+    for i=1:length(x2)
+      h=plot(x2(i),y2(i),'*'); set(h,'Color','g','LineWidth',2);
+      text(x2(i),y2(i),sprintf('%d',i));
+    end
+    hold off
+    drawnow;
+
     % Display epipolar lines in Image 2
     figure(2); imagesc(im2); axis image; hold on;
     plot(pts2(:,1), pts2(:,2), 'go', 'MarkerSize', 5, 'LineWidth', 1.5);
     title('Image 2 with corresponding epipolar lines');
-    draw_epipolar_lines(F, pts1, im2, 2);
-    
+    overlay_epipolar_lines(F, pts1, im2, 2);
+  
     % Display epipolar lines in Image 1 for points from Image 2
     figure(1); hold on;
-    draw_epipolar_lines(F', pts2, im1, 1);
+    title('Image 1 with epipolar lines');
+    overlay_epipolar_lines(F', pts2, im1, 1);
     hold off;
 end
 
-function draw_epipolar_lines(F, pts, img, figNum)
-    % Helper function to draw epipolar lines given F, points, and figure
-    colors = 'bgrcmyk';
-    L = F * [pts(:, 1)'; pts(:, 2)'; ones(1, size(pts, 1))]; % Epipolar lines
-    
-    % Get image dimensions
+function overlay_epipolar_lines(F, pts, img, figureNum)
+    % generalized function to overlay epipolar lines given F, points, and figure
+    colors = 'bgrcmykbgrcmykbgrcmykbgrcmykbgrcmykbgrcmykbgrcmyk';
+    L = F * [pts(:, 1)'; pts(:, 2)'; ones(1, size(pts, 1))]; %pts rows = number of points
     [nr, nc, ~] = size(img);
-    figure(figNum); hold on;
+    figure(figureNum); imagesc(img); axis image;
+    hold on; plot(pts(:, 1), pts(:, 2), '*r'); 
+
     
-    for i = 1:size(L, 2)
+    for i = 1:size(L, 2) %number of columns in L(=number of epipolar lines)
         a = L(1, i); b = L(2, i); c = L(3, i);
-        
-        % Determine if the line is more vertical or horizontal
         if abs(a) > abs(b)
-            ylo = 1; yhi = nr;
+            ylo=0; yhi = nr;
             xlo = (-b * ylo - c) / a;
             xhi = (-b * yhi - c) / a;
-            plot([xlo, xhi], [ylo, yhi], colors(mod(i, length(colors)) + 1), 'LineWidth', 1.5);
+            h=plot([xlo; xhi],[ylo; yhi]);
+            set(h,'Color',colors(i),'LineWidth',2);
+            
         else
-            xlo = 1; xhi = nc;
+            xlo = 0; xhi = nc;
             ylo = (-a * xlo - c) / b;
             yhi = (-a * xhi - c) / b;
-            plot([xlo, xhi], [ylo, yhi], colors(mod(i, length(colors)) + 1), 'LineWidth', 1.5);
+            h=plot([xlo; xhi],[ylo; yhi],'b');
+            set(h,'Color',colors(i),'LineWidth',2);
+
         end
     end
     hold off;
