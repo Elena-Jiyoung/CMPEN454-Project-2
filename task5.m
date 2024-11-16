@@ -41,96 +41,90 @@ im2 = imread("im2corrected.jpg");
 
 
 % Select points in im1 and im2 for sanity check
-% Select points in Image 1
-figure, imshow(im1);
-title('Click to select points in Image 1, then press Enter');
-[x1, y1] = getpts;
-pts1 = [x1, y1];
+figure(1); imagesc(im); axis image; drawnow;
+figure(2); imagesc(im2); axis image; drawnow;
 
-% Select corresponding points in Image 2
-figure, imshow(im2);
-title('Click to select corresponding points in Image 2, then press Enter');
-[x2, y2] = getpts;
-pts2 = [x2, y2];
+figure(1); [x1,y1] = getpts; pts1 = [x1, y1];
+figure(1); imagesc(im); axis image; hold on
+for i=1:length(x1)
+   h=plot(x1(i),y1(i),'*'); set(h,'Color','g','LineWidth',2);
+   text(x1(i),y1(i),sprintf('%d',i));
+end
+hold off
+drawnow;
 
-% Perform Sanity check
-sanity_check(im1, im2, F, pts1, pts2);
+figure(2); imagesc(im2); axis image; drawnow;
+ [x2,y2] = getpts; pts2 = [x2, y2];
+figure(2); imagesc(im2); axis image; hold on
+for i=1:length(x2)
+   h=plot(x2(i),y2(i),'*'); set(h,'Color','g','LineWidth',2);
+   text(x2(i),y2(i),sprintf('%d',i));
+end
+hold off
+drawnow;
 
-% Sanity Check functions
-function sanity_check(im1, im2, F, pts1, pts2)
-    % Sanity check for F by plotting epipolar lines
-    figure(1); imagesc(im1); axis image; drawnow;
-    figure(2); imagesc(im2); axis image; drawnow;
-    if nargin > 2
-       x1 = pts1(:,1);
-       y1 = pts1(:,2);
+colors =  'bgrcmykbgrcmykbgrcmykbgrcmykbgrcmykbgrcmykbgrcmyk';
+%overlay epipolar lines on im2
+L = F * [x1' ; y1'; ones(size(x1'))];
+[nr,nc,nb] = size(im2);
+figure(2); imagesc(im2); axis image;
+hold on; plot(x2,y2,'*'); hold off
+for i=1:length(L)
+    a = L(1,i); b = L(2,i); c=L(3,i);
+    if (abs(a) > (abs(b)))
+       ylo=0; yhi=nr; 
+       xlo = (-b * ylo - c) / a;
+       xhi = (-b * yhi - c) / a;
+       hold on
+       h=plot([xlo; xhi],[ylo; yhi]);
+       set(h,'Color',colors(i),'LineWidth',2);
+       hold off
+       drawnow;
     else
-       figure(1); imagesc(im1); axis image; drawnow;
-       [x1,y1] = getpts;
+       xlo=0; xhi=nc; 
+       ylo = (-a * xlo - c) / b;
+       yhi = (-a * xhi - c) / b;
+       hold on
+       h=plot([xlo; xhi],[ylo; yhi],'b');
+       set(h,'Color',colors(i),'LineWidth',2);
+       hold off
+       drawnow;
     end
-    figure(1); imagesc(im1); axis image; hold on
-    for i=1:length(x1)
-      h=plot(x1(i),y1(i),'*'); set(h,'Color','g','LineWidth',2);
-      text(x1(i),y1(i),sprintf('%d',i));
-    end
-    hold off
-    drawnow;
-
-    if nargin > 3
-       x2 = pts2(:,1);
-       y2 = pts2(:,2);
-    else
-       figure(2); imagesc(im2); axis image; drawnow;
-       [x2,y2] = getpts;
-    end
-    figure(2); imagesc(im2); axis image; hold on
-    for i=1:length(x2)
-      h=plot(x2(i),y2(i),'*'); set(h,'Color','g','LineWidth',2);
-      text(x2(i),y2(i),sprintf('%d',i));
-    end
-    hold off
-    drawnow;
-
-    % Display epipolar lines in Image 2
-    figure(2); imagesc(im2); axis image; hold on;
-    plot(pts2(:,1), pts2(:,2), 'go', 'MarkerSize', 5, 'LineWidth', 1.5);
-    title('Image 2 with corresponding epipolar lines');
-    overlay_epipolar_lines(F, pts1, im2, 2);
-  
-    % Display epipolar lines in Image 1 for points from Image 2
-    figure(1); hold on;
-    title('Image 1 with epipolar lines');
-    overlay_epipolar_lines(F', pts2, im1, 1);
-    hold off;
 end
 
-function overlay_epipolar_lines(F, pts, img, figureNum)
-    % generalized function to overlay epipolar lines given F, points, and figure
-    colors = 'bgrcmykbgrcmykbgrcmykbgrcmykbgrcmykbgrcmykbgrcmyk';
-    L = F * [pts(:, 1)'; pts(:, 2)'; ones(1, size(pts, 1))]; %pts rows = number of points
-    [nr, nc, ~] = size(img);
-    figure(figureNum); imagesc(img); axis image;
-    hold on; plot(pts(:, 1), pts(:, 2), '*r'); 
 
-    
-    for i = 1:size(L, 2) %number of columns in L(=number of epipolar lines)
-        a = L(1, i); b = L(2, i); c = L(3, i);
-        if abs(a) > abs(b)
-            ylo=0; yhi = nr;
-            xlo = (-b * ylo - c) / a;
-            xhi = (-b * yhi - c) / a;
-            h=plot([xlo; xhi],[ylo; yhi]);
-            set(h,'Color',colors(i),'LineWidth',2);
-            
-        else
-            xlo = 0; xhi = nc;
-            ylo = (-a * xlo - c) / b;
-            yhi = (-a * xhi - c) / b;
-            h=plot([xlo; xhi],[ylo; yhi],'b');
-            set(h,'Color',colors(i),'LineWidth',2);
-
-        end
+%overlay epipolar lines on im1
+L = ([x2' ; y2'; ones(size(x2'))]' * F)' ;
+[nr,nc,nb] = size(im);
+figure(1); imagesc(im); axis image;
+hold on; plot(x1,y1,'*'); hold off
+for i=1:length(L)
+    a = L(1,i); b = L(2,i); c=L(3,i);
+    if (abs(a) > (abs(b)))
+       ylo=0; yhi=nr; 
+       xlo = (-b * ylo - c) / a;
+       xhi = (-b * yhi - c) / a;
+       hold on
+       h=plot([xlo; xhi],[ylo; yhi],'b');
+       set(h,'Color',colors(i),'LineWidth',2);
+       hold off
+       drawnow;
+    else
+       xlo=0; xhi=nc; 
+       ylo = (-a * xlo - c) / b;
+       yhi = (-a * xhi - c) / b;
+       hold on
+       h=plot([xlo; xhi],[ylo; yhi],'b');
+       set(h,'Color',colors(i),'LineWidth',2);
+       hold off
+       drawnow;
     end
-    hold off;
 end
 
+
+for j=1:3
+    for i=1:3
+        fprintf('%10g ',10000*F(j,i));
+    end
+    fprintf('\n');
+end
