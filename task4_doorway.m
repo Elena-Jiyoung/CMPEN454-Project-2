@@ -1,6 +1,7 @@
 paramV1 = load("Parameters_V1_1.mat").Parameters;
 paramV2 = load("Parameters_V2_1.mat").Parameters;
 
+% pixel points for top of doorway
 pixel_points1 = [1149; 309];
 pixel_points2 = [203; 231];
 

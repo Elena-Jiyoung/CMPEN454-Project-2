@@ -1,6 +1,7 @@
 paramV1 = load("Parameters_V1_1.mat").Parameters;
 paramV2 = load("Parameters_V2_1.mat").Parameters;
 
+% 3 2D pixel floor points
 pixel_points1 = [410, 1051, 1002; 716, 954, 617];
 pixel_points2 = [962, 1698, 566; 886, 708, 610];
 

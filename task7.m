@@ -6,6 +6,7 @@ function calculateSED(F)
     % 39 2D points from task 3.2
     pixel_points1 = load("pixel_points1.mat").pixel_points1;
     pixel_points2 = load("pixel_points2.mat").pixel_points2;
+    % sums for calculating mean
     sum1 = 0;
     sum2 = 0;
     for i = 1:size(pixel_points1, 2)
@@ -16,6 +17,7 @@ function calculateSED(F)
         point2(3) = 1;
         
         epipolar_line1 = F * point1;
+        % (ax+by+c)^2/(a^2+b^2)
         SED_numerator1 = (epipolar_line1(1) * point2(1) + epipolar_line1(2) * point2(2) + epipolar_line1(3))^2;
         SED_denominator1 = (epipolar_line1(1)^2 + epipolar_line1(2)^2);
         SED1 = SED_numerator1 / SED_denominator1;
@@ -33,8 +35,9 @@ function calculateSED(F)
     fprintf("\nMean of SED1: %.30f \nMean of SED2: %.30f", sum1/39, sum2/39);
 end
 
+fprintf("\nCalculate using F from task 5:")
 calculateSED(F);
-disp("Calculate using F from task 6 with Hartley Preconditioning: ")
+fprintf("\nCalculate using F from task 6 with Hartley Preconditioning: ")
 calculateSED(F_with_hartley);
-disp("Calculate using F from task 6 without Hartley Preconditioning: ")
+fprintf("\nCalculate using F from task 6 without Hartley Preconditioning: ")
 calculateSED(F_without_hartley);

@@ -1,6 +1,7 @@
 paramV1 = load("Parameters_V1_1.mat").Parameters;
 paramV2 = load("Parameters_V2_1.mat").Parameters;
 
+% pixel points for top of head
 pixel_points1 = [591; 367];
 pixel_points2 = [1107; 339];
 
