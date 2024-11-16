@@ -1,6 +1,7 @@
 paramV1 = load("Parameters_V1_1.mat").Parameters;
 paramV2 = load("Parameters_V2_1.mat").Parameters;
 
+% 3 2D pixel coords for wall points
 pixel_points1 = [1205, 1379, 1897; 302, 156, 590];
 pixel_points2 = [313, 521, 960; 223, 74, 431];
 
